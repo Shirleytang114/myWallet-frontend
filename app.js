@@ -31,7 +31,12 @@ const budgetPercent = document.getElementById("budget-percent");
 
 // ===== API Helper =====
 async function api(endpoint, options = {}) {
-  const url = `${CONFIG.API_BASE_URL}${endpoint}`;
+  // 確保 CONFIG 已經在 HTML 中被引入
+  const baseUrl = (typeof CONFIG !== 'undefined' && CONFIG.API_BASE_URL) 
+    ? CONFIG.API_BASE_URL 
+    : "http://localhost:3000"; // Fallback
+
+  const url = `${baseUrl}${endpoint}`;
   const headers = {
     "Content-Type": "application/json",
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -160,7 +165,13 @@ function renderTransactions() {
             ${txn.category_name.charAt(0)}
           </div>
           <div class="info">
-            <span class="note">${txn.note || txn.category_name}</span>
+            <span class="note">
+              ${txn.note || txn.category_name}
+              <!-- ★ 顯示使用者名稱標籤 ★ -->
+              <span style="font-size: 0.75rem; background-color: #f1f3f4; color: #666; padding: 2px 6px; border-radius: 4px; margin-left: 6px; vertical-align: middle; display: inline-block;">
+                👤 ${txn.accountName || 'Admin'}
+              </span>
+            </span>
             <span class="meta">${txn.date} · ${txn.category_name}</span>
           </div>
         </div>
